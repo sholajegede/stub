@@ -1,0 +1,28 @@
+{
+  "name": "stub",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/server.ts",
+    "start": "bun src/server.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "bench": "bun scripts/bench.ts",
+    "live": "bun scripts/live.ts",
+    "probe-org": "bun scripts/probe-org.ts",
+    "live-gate": "bun scripts/live-gate.ts",
+    "live-concurrency": "bun scripts/live-concurrency.ts",
+    "plan-watch": "bun scripts/plan-watch.ts"
+  },
+  "dependencies": {
+    "@fontsource-variable/geist": "^5.3.0",
+    "hono": "^4.13.13",
+    "jose": "^6.2.13"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.3",
+    "typescript": "^5"
+  }
+}

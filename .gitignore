@@ -1,0 +1,19 @@
+node_modules
+.env*
+!.env.example
+.DS_Store
+results-*.json
+bench.log
+bench.done
+
+# local working notes
+BUILD_PLAN.md
+BUILD_LOG.md
+CLAUDE.md
+AGENTS.md
+.agents/
+.claude/
+skills-lock.json
+
+# local customer map
+customers.json
