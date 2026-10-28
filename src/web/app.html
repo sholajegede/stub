@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stub inspector</title><link rel="icon" href="/logo.svg"><link rel="stylesheet" href="/style.css"></head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav"><a class="brand" href="/"><img src="/logo.svg" width="34" height="24" alt="">Stub</a><span class="grow"></span><a class="btn light" href="/">Back to the overview</a></header>
+<main class="app" id="main">
+  <h1>Inspector</h1>
+  <p class="lede">Send requests as three customers, break the plan service on purpose, and see where each answer came from.</p>
+  <div class="grid2">
+    <section class="panel"><h3>Send a request</h3>
+      <div class="row"><label for="org" class="sr" style="position:absolute;left:-999px">Customer</label>
+        <select id="org"><option value="acme">Acme (reports)</option><option value="globex">Globex (reports, exports)</option><option value="initech">Initech (all three)</option></select>
+        <button class="btn orange" data-route="/v1/reports" type="button">Reports</button>
+        <button class="btn orange" data-route="/v1/exports" type="button">Exports</button>
+        <button class="btn orange" data-route="/v1/agents/run" type="button">Agent run</button>
+        <button class="btn" id="burst" type="button">Send 20 at once</button></div>
+      <p class="note">Reports is a cheap route. Exports and Agent run are sensitive routes: they close when the plan cannot be checked.</p></section>
+    <section class="panel"><h3>Break things on purpose</h3>
+      <div class="row"><button class="btn red" id="down" type="button">Take the plan service down</button>
+        <button class="btn" id="upgrade" type="button">Give Acme the exports feature</button>
+        <button class="btn" id="purge" type="button">Purge Acme</button></div>
+      <p class="note" id="state">The plan service is up. Purge is what a plan-change event does.</p></section>
+  </div>
+  <div class="tiles" id="stats" aria-live="polite"></div>
+  <section class="panel"><h3>Requests</h3>
+    <table><thead><tr><th>Time</th><th>Customer</th><th>Route</th><th>Status</th><th>Answer from</th><th>ms</th></tr></thead><tbody id="log"></tbody></table></section>
+</main>
+<script src="/stub.js"></script>
+<script>
+let down=false;const log=$("#log");
+async function send(route){const org=$("#org").value;const r=await call(route,org);const tr=document.createElement("tr");
+ const cells=[new Date().toLocaleTimeString(),org,route];cells.forEach(t=>{const td=document.createElement("td");td.textContent=t;tr.append(td)});
+ const a=document.createElement("td");a.append(chip(String(r.status),"s"+r.status));const b=document.createElement("td");b.append(chip(r.source,r.source));const c=document.createElement("td");c.textContent=r.ms.toFixed(1);tr.append(a,b,c);
+ log.prepend(tr);while(log.children.length>8)log.lastChild.remove();paint()}
+async function paint(){const s=await refreshStats();$("#stats").replaceChildren(...[["Requests checked",s.served],["Answered from the cache",s.hit+"%"],["Calls to the plan service",s.calls],["Calls merged into another",s.merged],["Plan service failures",s.errors]].map(([a,b])=>{const d=document.createElement("div");d.className="tile";const sm=document.createElement("small");sm.textContent=a;const bb=document.createElement("b");bb.textContent=b;d.append(sm,bb);return d}))}
+document.querySelectorAll("[data-route]").forEach(b=>b.onclick=()=>send(b.dataset.route));
+$("#burst").onclick=()=>Promise.all(Array.from({length:20},()=>send("/v1/reports")));
+$("#down").onclick=async()=>{down=!down;await fetch("/_admin/down?on="+(down?1:0),{method:"POST"});$("#down").textContent=down?"Bring the plan service back":"Take the plan service down";$("#state").textContent=down?"The plan service is down. Customers in the cache keep working. New customers on sensitive routes get 503.":"The plan service is up. Purge is what a plan-change event does."};
+$("#upgrade").onclick=async()=>{await fetch("/_admin/plan",{method:"POST",body:JSON.stringify({key:"org:acme",plan:{reports:100,exports:100}})});$("#state").textContent="Acme now has exports in the plan service. The gate has not heard yet."};
+$("#purge").onclick=async()=>{await fetch("/_admin/purge?key=org:acme",{method:"POST"});$("#state").textContent="Acme was purged. The next request asks the plan service."};
+paint();
+</script></body></html>

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stub</title><meta name="description" content="A plan check on every request, answered from memory.">
+<link rel="icon" href="/logo.svg"><link rel="stylesheet" href="/style.css"></head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav">
+  <a class="brand" href="/"><img src="/logo.svg" width="34" height="24" alt="">Stub</a>
+  <nav class="links" aria-label="Main"><a href="#how">How it works</a><a href="#answers">Answers</a><a href="#plans">Plans</a><a href="#measured">Measured</a><a href="#faq">FAQ</a></nav>
+  <span class="grow"></span>
+  <a class="btn" href="/app">Open the inspector</a>
+</header>
+<main id="main">
+<section class="hero">
+  <h1>Every request needs a plan check.</h1>
+  <p class="lede">Stub answers from memory, asks the billing provider only when it has to, and stays closed when the answer matters.</p>
+  <div class="composer" aria-label="Send a request">
+    <div class="top"><label for="org">Send a request as</label>
+      <select id="org"><option value="acme">Acme (Free)</option><option value="globex">Globex (Pro)</option><option value="initech">Initech (Business)</option></select></div>
+    <div class="out" id="out" aria-live="polite">Pick a route and press the arrow.</div>
+    <div class="bar"><span class="grow"></span><button class="send" id="go" aria-label="Send request">&#8599;</button></div>
+  </div>
+  <div class="tabs" role="group" aria-label="Route">
+    <button type="button" data-route="/v1/reports" aria-pressed="true">Reports</button><i></i>
+    <button type="button" data-route="/v1/exports" aria-pressed="false">Exports</button><i></i>
+    <button type="button" data-route="/v1/agents/run" aria-pressed="false">Agent run</button>
+  </div>
+  <div class="marquee" aria-hidden="true"><div class="row" id="marquee"></div></div>
+</section>
+
+<section class="sec wrap" id="how">
+  <div class="split">
+    <div>
+      <h2>The whole check.<br>No slowdown.</h2>
+      <p class="sub">A plan check is a lookup, and a lookup costs a network call. Stub keeps that call off the path of almost every request.</p>
+      <div class="art" aria-hidden="true"><div class="a"><img src="/logo.svg" width="96" height="68" alt="" style="filter:brightness(0) invert(1);opacity:.85"></div><div class="b">GET /v1/exports<br>200 fresh<br>0.4 ms</div><div class="c"></div></div>
+    </div>
+    <div class="rows">
+      <details open><summary>The token is checked on your server</summary><div class="body">Stub checks the signature, the issuer and the expiry with stored public keys. A request makes no network call for this step.</div></details>
+      <details><summary>Plans are kept in memory</summary><div class="body">An answer is fresh for 30 seconds. After that it is stale, and Stub serves it at once while a refresh runs behind the request.</div></details>
+      <details><summary>Many requests share one lookup</summary><div class="body">If 200 requests ask about the same new customer, Stub makes one call and gives the answer to all of them.</div></details>
+      <details><summary>A plan change clears the answer</summary><div class="body">When the billing provider reports a plan change, Stub forgets that customer. The next request asks again.</div></details>
+      <details><summary>It stays closed when it matters</summary><div class="body">If the plan cannot be checked, a cheap route lets the request through. A sensitive route returns 503.</div></details>
+    </div>
+  </div>
+</section>
+
+<section class="sec wrap" id="answers">
+  <h2>Where does each answer come from?</h2>
+  <p class="sub" style="font-size:19px;margin-top:20px;max-width:560px">Every response carries a <code>stub-source</code> header, so you can see which of the four cases you got.</p>
+  <div class="cards">
+    <div class="card"><h3>Fresh</h3><p><span class="chip fresh">fresh</span>Younger than 30 seconds. Stub uses it as it is.</p></div>
+    <div class="card"><h3>Stale</h3><p><span class="chip stale">stale</span>Between 30 seconds and 5 minutes old. Stub uses it at once and refreshes behind it.</p></div>
+    <div class="card"><h3>Unknown</h3><p><span class="chip unknown">unknown</span>No usable answer. A cheap route passes. A sensitive route returns 503.</p></div>
+  </div>
+</section>
+
+<section class="sec wrap" id="plans">
+  <h2>Three plans, three routes.</h2>
+  <p class="sub" style="font-size:19px;margin-top:20px;max-width:560px">The demo customers sit on these plans. Pick one in the box at the top and try each route.</p>
+  <div class="plans">
+    <div class="plan"><h3>Free</h3><div class="desc">Acme. Reads reports and nothing else.</div><div class="stat">1 <small>route</small></div><ul><li>Reports</li><li class="off">Exports</li><li class="off">Agent run</li></ul><button class="btn" data-pick="acme" type="button">Try as Acme</button></div>
+    <div class="plan"><h3>Pro <span class="badge">Popular</span></h3><div class="desc">Globex. Reports and exports.</div><div class="stat">2 <small>routes</small></div><ul><li>Reports</li><li>Exports</li><li class="off">Agent run</li></ul><button class="btn" data-pick="globex" type="button">Try as Globex</button></div>
+    <div class="plan"><h3>Business</h3><div class="desc">Initech. All three routes.</div><div class="stat">3 <small>routes</small></div><ul><li>Reports</li><li>Exports</li><li>Agent run</li></ul><button class="btn" data-pick="initech" type="button">Try as Initech</button></div>
+  </div>
+</section>
+
+<section class="band" id="measured">
+  <div class="wrap">
+    <h2>What the check costs.</h2>
+    <div class="nums">
+      <div><b>0.97 ms</b><span>median with a warm cache. No check: 1.06 ms</span></div>
+      <div><b>152 ms</b><span>median with a lookup on every request</span></div>
+      <div><b>200 &rarr; 1</b><span>lookups for 200 requests about one new customer</span></div>
+      <div><b>155 ms</b><span>until a plan change shows, with a purge event</span></div>
+    </div>
+    <p class="foot">Measured against a stand-in provider with a lookup delay of 150 ms that I set. These are not Kinde latencies. The repository has the scripts to repeat every number.</p>
+  </div>
+</section>
+
+<section class="sec wrap" id="faq">
+  <div class="split">
+    <h2>Frequently<br>asked questions</h2>
+    <div class="faq">
+      <details><summary>Why not put the plan in the token?</summary><div class="body">The Kinde docs list no billing entitlements claim, and a token lives 24 hours by default. A plan in the token would be as old as the token.</div></details>
+      <details><summary>How wrong can the answer be?</summary><div class="body">Up to about 30 seconds after a plan change, or until the change event arrives. While the provider is down, up to 5 minutes.</div></details>
+      <details><summary>Does it need Kinde?</summary><div class="body">No. The gateway needs a way to check a signed token and a way to read a plan. This version uses Kinde, and the stand-in runs with no account.</div></details>
+      <details><summary>Should it fail open or closed?</summary><div class="body">That depends on the route. Fail open where a wrong yes is cheap. Fail closed where it is not.</div></details>
+    </div>
+  </div>
+</section>
+
+<section class="cta"><h2>Go ahead.<br>Break it on purpose.</h2><p>Take the plan service down, change a plan, and watch what each request does.</p><a class="btn light" href="/app">Open the inspector</a></section>
+</main>
+<footer><span><b>Stub</b> &middot; MIT licence</span><span>Built with Bun, Hono and Kinde</span></footer>
+<script src="/stub.js"></script>
+<script>
+let route="/v1/reports";
+document.querySelectorAll(".tabs [data-route]").forEach(b=>b.onclick=()=>{route=b.dataset.route;document.querySelectorAll(".tabs [data-route]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)))});
+document.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{$("#org").value=b.dataset.pick;window.scrollTo({top:0,behavior:"smooth"})});
+$("#go").onclick=async()=>{const r=await call(route,$("#org").value);const out=$("#out");out.textContent="";out.append(chip(String(r.status),"s"+r.status),chip(r.source,r.source),document.createTextNode(r.ms.toFixed(1)+" ms  "+describe(r)))};
+const items=[["200 fresh","Answered from memory","dark"],["403","The plan does not include exports",""],["200 stale","Served at once, refreshed behind","blue"],["503","Closed: the plan could not be checked","orange"],["401","The token is not valid",""],["200 fetched","One lookup, shared by every request waiting","dark"],["200 unknown","A cheap route lets the request through","blue"],["200 fresh","Plan change purged, so the next answer is new","orange"]];
+const row=$("#marquee");for(let k=0;k<2;k++)items.forEach(([a,b,c])=>{const d=document.createElement("div");d.className="mini "+c;const s=document.createElement("b");s.textContent=a;const t=document.createElement("span");t.textContent=b;d.append(s,t);row.append(d)});
+</script></body></html>
