@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1000">
+<title>Stub cover</title>
+<style>
+@font-face{font-family:"Geist";font-weight:100 900;font-style:normal;src:url("/fonts/geist.woff2") format("woff2")}
+:root{--page:#eeecea;--ink:#1e1e24;--ink2:#4a4a52;--btn:#312f2f;--orange:#ff7a3d;--blue:#3b55e6}
+*{box-sizing:border-box;margin:0}
+html{background:#d9d6d2}
+body{font-family:"Geist",system-ui,sans-serif;-webkit-font-smoothing:antialiased;color:var(--ink)}
+/* The cover is 1000 x 420, the size DEV recommends. Export it at 2x. */
+#cover{position:relative;width:1000px;height:420px;margin:24px auto;overflow:hidden;background-color:var(--page);background-image:radial-gradient(rgba(30,30,36,.14) 1px,transparent 1.2px);background-size:16px 16px}
+.brand{position:absolute;left:52px;top:30px;display:flex;align-items:center;gap:9px;font:700 24px/1 "Geist";letter-spacing:-.04em}
+.tag{position:absolute;left:52px;top:78px;font:500 13px/1 "Geist";letter-spacing:.14em;text-transform:uppercase;color:var(--ink2)}
+h1{position:absolute;left:52px;top:104px;font-weight:600;font-size:57px;line-height:1.02;letter-spacing:-.05em;white-space:nowrap}
+h1 .free{display:inline-block;background:var(--orange);padding:0 12px 4px;margin-left:-12px;border-radius:8px}
+.lede{position:absolute;left:52px;top:252px;width:440px;font-size:19px;line-height:1.38;letter-spacing:-.012em;color:var(--ink)}
+.band{position:absolute;left:0;right:0;bottom:0;height:52px;background:var(--blue);color:#fff;display:flex;align-items:center;gap:14px;padding:0 52px;font-weight:600;font-size:19px;letter-spacing:-.02em}
+.band b{font-weight:700;background:#fff;color:var(--blue);border-radius:6px;padding:2px 9px}
+.band .arrow{opacity:.75}
+/* timeline */
+h1{font-size:52px}
+.tl{position:absolute;left:530px;top:40px;width:424px}
+.cap{font:600 12px/1 "Geist";letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);margin-bottom:12px}
+.rel{position:relative;display:flow-root}
+.lane{margin-bottom:14px}
+.lab{display:inline-block;position:relative;z-index:2;background:var(--page);padding-right:6px;font:600 13px/1 "Geist";margin-bottom:7px;letter-spacing:-.01em}
+.lab small{font:500 12px/1 "Geist";color:var(--ink2)}
+.bar{display:flex;height:42px;border:1.5px solid var(--ink);border-radius:10px;overflow:hidden;background:#fff}
+.seg{display:flex;align-items:center;justify-content:center;font:600 14px/1 "Geist";white-space:nowrap}
+.seg+.seg{border-left:1.5px solid var(--ink)}
+.pro{background:#d7ddff}.free{background:#ffd2bd}.stale{background:repeating-linear-gradient(135deg,#ffb98f 0 7px,#ffd8bf 7px 14px)}
+.now{background:var(--btn);color:#fff}
+.mark{position:absolute;left:calc(28% - 1px);top:16px;height:226px;border-left:2px dashed var(--ink)}
+.mtag{z-index:3;position:absolute;left:calc(28% - 70px);top:0;width:140px;text-align:center;font:600 12px/1 "Geist";background:var(--page);padding:0 4px}
+</style>
+</head>
+<body>
+<main id="cover">
+  <div class="brand"><img src="/logo.svg" width="34" height="24" alt="">Stub</div>
+  <div class="tag">Plan checks on every request</div>
+  <h1>The token says Pro.<br>The plan says <span class="free">Free.</span></h1>
+  <p class="lede">A customer downgrades at 10:00. The token from 9:00 stays valid for 24 hours, so it keeps saying Pro.</p>
+  <div class="tl">
+    <div class="cap">What each one says</div>
+    <div class="rel">
+      <div class="mark"></div><div class="mtag">Downgrade, 10:00</div>
+      <div class="lane" style="margin-top:40px"><div class="lab">Token <small>issued 9:00, valid 24 hours</small></div>
+        <div class="bar"><div class="seg pro" style="width:28%">Pro</div><div class="seg stale" style="width:72%">still says Pro</div></div></div>
+      <div class="lane"><div class="lab">Plan in billing <small>the truth</small></div>
+        <div class="bar"><div class="seg pro" style="width:28%">Pro</div><div class="seg free" style="width:72%">Free</div></div></div>
+      <div class="lane"><div class="lab">Stub <small>checks the plan on each request</small></div>
+        <div class="bar"><div class="seg pro" style="width:28%">Pro</div><div class="seg now" style="width:72%">Free</div></div></div>
+    </div>
+  </div>
+  <div class="band"><span>Ask the billing provider every time</span><b>499 ms</b><span class="arrow">&rarr;</span><span>Answer from memory</span><b>1.8 ms</b></div>
+</main>
+</body>
+</html>
